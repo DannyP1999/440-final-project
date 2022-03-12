@@ -6,7 +6,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # get a record of the file, where the first item from parse() is the largest chromosome
-file = 'E. coli Nissle Genome.gbff' 
+# file = "C:\\Users\\danielpascal\\Desktop\\MIT\\20.440\\'Pset4'\\440-pset4\\'Genome Data'\\E. coli Nissle Genome.gbff" 
+file = 'E. coli Nissle Genome.gbff'
+
 record = list(SeqIO.parse(file, 'gb'))[0]
 record
 
