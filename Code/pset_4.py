@@ -6,8 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # get a record of the file, where the first item from parse() is the largest chromosome
-# file = "C:\\Users\\danielpascal\\Desktop\\MIT\\20.440\\'Pset4'\\440-pset4\\'Genome Data'\\E. coli Nissle Genome.gbff" 
-file = 'E. coli Nissle Genome.gbff'
+file = '../Genome Data/E. coli Nissle Genome.gbff'
 
 record = list(SeqIO.parse(file, 'gb'))[0]
 record
@@ -54,11 +53,6 @@ frac_T = num_T/len(seq) * 100
 frac_G = num_G/len(seq) * 100
 frac_C = num_C/len(seq) * 100
 
-print(num_A)
-print(num_T)
-print(num_G)
-print(num_C)
-
 # creating the dataset
 data = {'A':frac_A, 'T':frac_T, 'G':frac_G,'C':frac_C}
 bases = list(data.keys())
@@ -71,5 +65,5 @@ plt.bar(bases, values, color ='maroon', width = 0.4)
 plt.xlabel("Nucleotide Base")
 plt.ylabel("Percentage of Genome (%)")
 plt.title("Distribution of Nucleotide Bases in E. coli Nissle Genome")
-plt.show()
-plt.savefig('Distribution of Nucleotide Bases.png')
+plt.savefig('../Figures/Distribution of Nucleotide Bases.png')
+plt.show() 
