@@ -66,9 +66,8 @@ fig = plt.figure(figsize = (10, 5))
 
 # creating the bar plot
 plt.bar(bases, values, color ='maroon', width = 0.4)
-
 plt.xlabel("Nucleotide Base")
 plt.ylabel("Percentage of Genome (%)")
 plt.title("Distribution of Nucleotide Bases in E. coli Nissle Genome")
 plt.show()
-
+plt.savefig('Distribution of Nucleotide Bases.png')
