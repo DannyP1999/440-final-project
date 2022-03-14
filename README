@@ -7,7 +7,8 @@ Team: Shonit Sharma, Daniel Pascal
 OVERVIEW
 Repository contains the data and code required to generate one figure from our project, 
 which is the analysis of conserved sequences present in transition metal ion transporters 
-for the E. coli Nissle genome.
+for the E. coli Nissle genome. Figure shows the percentage of A, T, G, and C in the E. coli 
+Nissle genome.
 
 
 ---------
