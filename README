@@ -1,1 +1,38 @@
-Blank README for now
+Daniel Pascal
+3/14/22
+20.440 Problem Set 4
+Team: Shonit Sharma, Daniel Pascal
+
+---------
+OVERVIEW
+Repository contains the data and code required to generate one figure from our project, 
+which is the analysis of conserved sequences present in transition metal ion transporters 
+for the E. coli Nissle genome.
+
+
+---------
+DATA
+Escherichia coli Nissle 1917 (E. coli) complete genome, including sequence and features in a
+RefSeq Genomic GenBank format (.gbff) file. Annotation was added by the NCBI Prokaryotic Genome 
+Annotation Pipeline (released 2013). Publicly available at https://www.ncbi.nlm.nih.gov/assembly/GCF_000714595.1#/def
+
+
+---------
+FOLDER STRUCTURE
+440-PSET4
+├── Code
+│   └── pset_4.py                               # code for generating first figure
+├── Figures
+│   └── 'Distribution of Nucleotide Bases.png'  # first figure
+└── Genome Data
+    └── 'E. coli Nissle Genome.gbff'            # genome data file
+
+
+---------
+INSTALLATION
+Run code by cloning repository and running the pset_4.py script after dowloading the required packages.
+
+Required packages:
+    - Bio==1.3.3
+    - matplotlib==3.3.4
+    - numpy==1.20.1
