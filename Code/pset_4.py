@@ -1,5 +1,7 @@
-# have to import both, but the second one just gives the extract() to get the sequence at a location.
-# if you don't have Bio installed, just have to do "conda install biopython" in terminal
+# ______________________________________________________________________________
+# have to import both, but the second one just gives the extract() to get the 
+# sequence at a location. if you don't have Bio installed, just have to do "conda 
+# install biopython" in terminal
 from Bio import SeqIO
 from Bio.SeqFeature import FeatureLocation
 from Bio import pairwise2
@@ -32,7 +34,8 @@ from matplotlib.pyplot import figure
 from random import randrange
 from collections import Counter
 
-# get a record of the file, where the first item from parse() is the largest chromosome
+# get a record of the file, where the first item from parse() is the 
+# largest chromosome
 file = '../Genome Data/E. coli Nissle Genome.gbff'
 record = list(SeqIO.parse(file, 'gb'))[0]
 
@@ -114,7 +117,7 @@ genes_df_sit = gene_df_generator(record, genes_df_sit) # iron/manganese transpor
 # export gene information to excel
 genes_df_all.to_excel('../Genome Data/Genes of Interest Nissle.xlsx')
 
-# ____________________________________________________________________________________________________________
+# ______________________________________________________________________________
 ## stop... HMMR time
 # creates and returns a hidden markov model for gene sequences of interest
 def stop_HMMER_time(gene_sequences_OI): # you can't touch this
@@ -173,7 +176,8 @@ def alignment_df_generator(gene_pairs, genes_df, nt_or_aa):
         alignment_scores_similarity.append(alignments[0][2]/alignments[0][4])
         consensus_seq.append(hmm_consensus)
 
-    # creating a dictionary and dataframe containing all gene pairs and relevant alignment scores
+    # creating a dictionary and dataframe containing all gene pairs and 
+    # relevant alignment scores
     gene_pair_names = []
     for i in range(len(gene_pairs)):
         pair_name_OI = genes_df.Gene[gene_pairs[i][0]] + ' + ' + genes_df.Gene[gene_pairs[i][1]]
@@ -189,7 +193,7 @@ def alignment_df_generator(gene_pairs, genes_df, nt_or_aa):
     return gene_pair_df
 
 
-# ____________________________________________________________________________________________________________
+# ______________________________________________________________________________
 ## Compute alignment scores between pairs of genes
 def gene_pair_df_generator(genes_df, nt_or_aa):
     # numbers corresponding to each gene of interest
@@ -205,16 +209,22 @@ def gene_pair_df_generator(genes_df, nt_or_aa):
 # nt_or_aa = "nt"
 nt_or_aa = "aa"
 
-genes_df_all_paired = gene_pair_df_generator(genes_df_all, nt_or_aa) # all genese listed below
-genes_df_cus_paired = gene_pair_df_generator(genes_df_cus, nt_or_aa) # copper/silver transporters
-genes_df_fec_paired = gene_pair_df_generator(genes_df_fec, nt_or_aa) # iron transporters
-genes_df_zn_paired = gene_pair_df_generator(genes_df_zn, nt_or_aa) # zinc transporters
-genes_df_sit_paired = gene_pair_df_generator(genes_df_sit, nt_or_aa) # iron/manganese transporters
+# all genese listed below
+genes_df_all_paired = gene_pair_df_generator(genes_df_all, nt_or_aa) 
+# copper/silver transporters
+genes_df_cus_paired = gene_pair_df_generator(genes_df_cus, nt_or_aa) 
+# iron transporters
+genes_df_fec_paired = gene_pair_df_generator(genes_df_fec, nt_or_aa) 
+# zinc transporters
+genes_df_zn_paired = gene_pair_df_generator(genes_df_zn, nt_or_aa) 
+# iron/manganese transporters
+genes_df_sit_paired = gene_pair_df_generator(genes_df_sit, nt_or_aa) 
 
 
-# ____________________________________________________________________________________________________________
+# ______________________________________________________________________________
 ### Applying HMM
-## Align all EcN genes of interest, then build an HMM from the multiple sequence alignment, after which we 
+## Align all EcN genes of interest, then build an HMM from the multiple 
+## sequence alignment, after which we 
 ## can apply the HMM to a sequence database
 
 ## Compute alignment scores between pairs of genes
@@ -344,14 +354,11 @@ protein_dict_bac_subt = {'Protein Name': bac_subt_proteins_name,
 protein_df_bac_subt = pd.DataFrame(data=protein_dict_bac_subt)
 
 
-print("\n", faa_salm, "\n")
-# display(protein_df_salm)
-
-print("\n", faa_bac_subt, "\n")
-# display(protein_df_bac_subt)
+protein_df_salm.to_excel('../Figures/Identified Salmonella Transporters.xlsx')
+protein_df_salm.to_excel('../Figures/Identified Bacillus Subtillis Transporters.xlsx')
 
 
-# ____________________________________________________________________________________________________________
+# ______________________________________________________________________________
 ### BOOTSTRAPPING
 # function for generating randomly sampled df for use with bootstrapping
 def rand_gene_df_generator(genes_df):
@@ -455,6 +462,8 @@ def plot_bootstrap(protein_df_salm_rand, protein_df_bac_subt_rand):
     plt.xticks(rotation = 45)
     plt.ylabel('Percentage of Bootstrap Replicates')
     plt.legend(['$\it{Salmonella}$'])
+    plt.xlabel('Gene Identified by HMM')
+    plt.savefig('../Figures/Salmonella Bootstrap.png')
 
     plt.figure(1, figsize = (10, 5))
     bac_subt_labels = ['srfP', 'no hits', 'yscB', 'mntB', 'sppO',
@@ -466,10 +475,11 @@ def plot_bootstrap(protein_df_salm_rand, protein_df_bac_subt_rand):
     # plt.bar(bac_subt_labels[0:(len(counts_bac_subt[0]))], counts_bac_subt[1], color='#FF6103')
     plt.bar(counts_bac_subt[0], counts_bac_subt[1], color='#FF6103')
     plt.xticks(rotation = 45)
+    plt.title('Ratios of HMM-Identified Genes for 1000 Bootstrap Replicates')
     plt.ylabel('Percentage of Bootstrap Replicates')
     plt.legend(['$\it{Bacillus}$ $\it{subtilis}$'])
     fig = plt.xlabel('Gene Identified by HMM')
-    
+    plt.savefig('../Figures/Bacillus Subtilis Bootstrap.png')
     return fig
 
 samples = 1000
@@ -477,7 +487,5 @@ samples = 1000
 # display(protein_df_salm_rand)
 
 fig = plot_bootstrap(protein_df_salm_rand, protein_df_bac_subt_rand)
-
-plt.savefig('../Figures/Salmonella and Bacillus Subtilis Bootstrap.png')
 
 print('done')
