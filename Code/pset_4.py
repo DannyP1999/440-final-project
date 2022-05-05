@@ -36,7 +36,7 @@ from collections import Counter
 
 # get a record of the file, where the first item from parse() is the 
 # largest chromosome
-file = '../Genome Data/E. coli Nissle Genome.gbff'
+file = '../Genome Data/Genome and FASTA Files/E. coli Nissle Genome.gbff'
 record = list(SeqIO.parse(file, 'gb'))[0]
 
 # if you need the sequence of the whole record
@@ -95,11 +95,11 @@ def gene_df_generator(record, genes_df):
 
 # load excel spreadsheets with genes of interest from E. coli Nissle (EcN)
 # cluster spreadsheets and clusters correspond to more specific families of genes
-genes_df_all = pd.read_excel('../Genome Data/Metal Transporter Genes in E. coli Nissle (440).xlsx')
-genes_df_cus = pd.read_excel('../Genome Data/cus cluster.xlsx') # copper/silver
-genes_df_fec = pd.read_excel('../Genome Data/fec cluster.xlsx') # iron
-genes_df_zn = pd.read_excel('../Genome Data/zn cluster.xlsx') # zinc
-genes_df_sit = pd.read_excel('../Genome Data/sit cluster.xlsx') # iron/manganese
+genes_df_all = pd.read_excel('../Genome Data/Genes of Interest/Metal Transporter Genes in E. coli Nissle (440).xlsx')
+genes_df_cus = pd.read_excel('../Genome Data/Genes of Interest/cus cluster.xlsx') # copper/silver
+genes_df_fec = pd.read_excel('../Genome Data/Genes of Interest/fec cluster.xlsx') # iron
+genes_df_zn = pd.read_excel('../Genome Data/Genes of Interest/zn cluster.xlsx') # zinc
+genes_df_sit = pd.read_excel('../Genome Data/Genes of Interest/sit cluster.xlsx') # iron/manganese
 
 genes_df_all = gene_df_generator(record, genes_df_all) # all genes listed below
 genes_df_cus = gene_df_generator(record, genes_df_cus) # copper/silver transporters
@@ -107,15 +107,8 @@ genes_df_fec = gene_df_generator(record, genes_df_fec) # iron transporters
 genes_df_zn = gene_df_generator(record, genes_df_zn) # zinc transporters
 genes_df_sit = gene_df_generator(record, genes_df_sit) # iron/manganese transporters
 
-## display gene dataframes to check
-# display(genes_df_all)
-# display(genes_df_cus)
-# display(genes_df_fec)
-# display(genes_df_zn)
-# display(genes_df_sit)
-
 # export gene information to excel
-genes_df_all.to_excel('../Genome Data/Genes of Interest Nissle.xlsx')
+genes_df_all.to_excel('../Genome Data/Genes of Interest/Genes of Interest Nissle.xlsx')
 
 # ______________________________________________________________________________
 ## stop... HMMR time
@@ -291,7 +284,7 @@ def apply_HMM(hmm, faa):
         return [target_protein_name, target_protein_seq]
 
         # Salmonella
-faa_salm = "../Genome Data/Salmonella.faa"
+faa_salm = "../Genome Data/Genome and FASTA Files/Salmonella.faa"
 # print("\n", faa_salm, "\n")
 
 hmm_all_salm = create_HMM(genes_df_all)
@@ -322,7 +315,7 @@ protein_df_salm = pd.DataFrame(data=protein_dict_salm)
 
 
 # Bacillus subtilis
-faa_bac_subt = "../Genome Data/Bacillus subtilis.faa"
+faa_bac_subt = "../Genome Data/Genome and FASTA Files/Bacillus subtilis.faa"
 # print("\n", faa_bac_subt, "\n")
 
 hmm_all_bac_subt = create_HMM(genes_df_all)
@@ -484,8 +477,159 @@ def plot_bootstrap(protein_df_salm_rand, protein_df_bac_subt_rand):
 
 samples = 1000
 [protein_df_salm_rand, protein_df_bac_subt_rand] = bootstrap(samples, genes_df_all)
-# display(protein_df_salm_rand)
-
 fig = plot_bootstrap(protein_df_salm_rand, protein_df_bac_subt_rand)
+
+
+
+# ______________________________________________________________________________
+# initialize number of nucleotide bases 
+num_A = 0
+num_T = 0
+num_G = 0
+num_C = 0
+
+for i in range(len(seq)): # loop through every base in the genome sequence
+    
+    if (seq[i] == 'A'):
+        num_A += 1
+    
+    elif (seq[i] == 'T'):
+        num_T += 1
+    
+    elif (seq[i] == 'G'):
+        num_G += 1
+    
+    elif (seq[i] == 'C'):
+        num_C += 1
+    
+frac_A = num_A/len(seq) * 100
+frac_T = num_T/len(seq) * 100
+frac_G = num_G/len(seq) * 100
+frac_C = num_C/len(seq) * 100
+
+# creating the dataset
+data = {'A':frac_A, 'T':frac_T, 'G':frac_G,'C':frac_C}
+bases = list(data.keys())
+values = list(data.values())
+
+fig = plt.figure(figsize = (10, 5))
+
+# creating the bar plot
+plt.bar(bases, values, color ='maroon', width = 0.4)
+
+plt.xlabel("Nucleotide Base")
+plt.ylabel("Percentage of Genome (%)")
+plt.title("Distribution of Nucleotide Bases in E. coli Nissle Genome")
+plt.savefig('Distribution of Nucleotide Bases.png')
+plt.show()
+
+
+# ______________________________________________________________________________
+### Onehot Encoding
+# Basic structure inspired by: https://machinelearningmastery.com/how-to-one-hot-encode-sequence-data-in-python/
+from numpy import argmax
+
+# inputs
+alphabet_nt = 'ATCG'
+alphabet_aa = 'ACDEFGHIKLMNPQRSTVWY'
+# data = 'AACCTGTGAC'
+data_nt = genes_df_all.Sequence[0]
+data_aa = genes_df_all.Translation[0]
+
+alphabet = alphabet_nt
+data = data_nt
+
+# alphabet = alphabet_aa
+# data = data_aa
+
+# print('data:', data)
+
+# encoding
+char_to_int = dict((c, i) for i, c in enumerate(alphabet))
+int_to_char = dict((i, c) for i, c in enumerate(alphabet))
+
+
+# integer encode input data
+integer_encoded = [char_to_int[char] for char in data]
+# print('data encode:', integer_encoded)
+
+
+# one hot encode
+onehot_encoded = list()
+for value in integer_encoded:
+    letter = [0 for _ in range(len(alphabet))]
+    letter[value] = 1
+    onehot_encoded.append(letter)
+# print('One Hot encode:', onehot_encoded)
+
+
+# one hot dataframe
+onehot_df = pd.DataFrame([])
+
+onehot_df['Alphabet'] = list(alphabet)
+
+for i in range(len(onehot_encoded)):
+    onehot_df[i] = onehot_encoded[i]
+
+# invert encoding
+inverted = int_to_char[argmax(onehot_encoded[0])]
+
+
+# Function-based Dendrogram Generator
+
+def create_square_mat(genes_df, genes_df_paired):
+    
+    square_mat_df = pd.DataFrame(np.zeros((len(genes_df.Gene),len(genes_df.Gene))),
+                                 index = list(genes_df.Gene),
+                                 columns = list(genes_df.Gene))
+
+    np.fill_diagonal(square_mat_df.values, 1)
+
+    gene1 = list(np.zeros((len(genes_df_paired.Genes),1)))
+    gene2 = list(np.zeros((len(genes_df_paired.Genes),1)))
+
+    for i in range(len(genes_df_paired.Genes)):
+        for j in range(len(genes_df.Gene)):
+            gene1[i]=genes_df_paired.Genes[i][0:4]
+            gene2[i]=genes_df_paired.Genes[i][7:11]
+        square_mat_df.loc[gene1[i],gene2[i]] = genes_df_paired.Similarity[i]
+        square_mat_df.loc[gene2[i],gene1[i]] = genes_df_paired.Similarity[i]
+    
+    return square_mat_df
+
+def create_dendogram(square_mat_df, genes_df):
+    
+    square_mat_df -= 1
+    mat = -square_mat_df
+    dists = squareform(mat)
+    linkage_matrix = linkage(dists, "single")
+    figure(figsize=(10,5))
+    dend = dendrogram(linkage_matrix, labels=list(genes_df.Gene))
+    plt.title("Dendrogram of Genes")
+    plt.ylabel("Dissimilarity of Genes")
+    plt.xlabel("Genes")
+    plt.ylim([0,1])
+    plt.show()
+    
+    return dend
+
+
+    # All Dendrograms
+
+square_mat_all_df = create_square_mat(genes_df_all, genes_df_all_paired)
+dend_all = create_dendogram(square_mat_all_df, genes_df_all)
+
+square_mat_cus_df = create_square_mat(genes_df_cus, genes_df_cus_paired)
+dend_cus = create_dendogram(square_mat_cus_df, genes_df_cus)
+
+square_mat_fec_df = create_square_mat(genes_df_fec, genes_df_fec_paired)
+dend_fec = create_dendogram(square_mat_fec_df, genes_df_fec)
+
+square_mat_zn_df = create_square_mat(genes_df_zn, genes_df_zn_paired)
+dend_zn = create_dendogram(square_mat_zn_df, genes_df_zn)
+
+square_mat_sit_df = create_square_mat(genes_df_sit, genes_df_sit_paired)
+dend_sit = create_dendogram(square_mat_sit_df, genes_df_sit)
+
 
 print('done')
