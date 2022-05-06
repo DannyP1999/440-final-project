@@ -1,6 +1,5 @@
 # ______________________________________________________________________________
-# have to import both, but the second one just gives the extract() to get the 
-# sequence at a location. if you don't have Bio installed, just have to do "conda 
+# if you don't have Bio installed, just have to do "conda 
 # install biopython" in terminal
 from Bio import SeqIO
 from Bio.SeqFeature import FeatureLocation
