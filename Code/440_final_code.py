@@ -1,6 +1,8 @@
 # ______________________________________________________________________________
 # if you don't have Bio installed, just have to do "conda 
 # install "pip install biopython" in terminal
+
+# packages to import
 from Bio import SeqIO
 from Bio.SeqFeature import FeatureLocation
 from Bio import pairwise2
@@ -33,14 +35,14 @@ from matplotlib.pyplot import figure
 from random import randrange
 from collections import Counter
 
-# get a record of the file, where the first item from parse() is the 
-# largest chromosome
+# ______________________________________________________________________________
+# get a record of the file, where the first item from parse() is the largest 
+# chromosome
 file = '../Genome Data/Genome and FASTA Files/E. coli Nissle Genome.gbff'
 record = list(SeqIO.parse(file, 'gb'))[0]
 
 # if you need the sequence of the whole record
 seq = record.seq
-
 
 ## Importing and creating dataframe for relevant Nissle parameters
 # takes a gbff genebank file record and excel spreadsheet 
@@ -75,6 +77,7 @@ def gene_df_generator(record, genes_df):
                     # gene function description
                     gene_product_OI = feature_OI.qualifiers['product'] 
 
+                    # append gene information to corresponding category
                     gene_products.append(gene_product_OI[0])
                     gene_names.append(gene_OI)
                     gene_seqs.append(gene_seq_OI)
@@ -90,7 +93,7 @@ def gene_df_generator(record, genes_df):
     genes_df['Sequence'] = gene_seqs # input gene nt sequence into df
     genes_df['Translation'] = gene_tls # input gene aa sequence into df
     
-    return genes_df
+    return genes_df # dataframe with all gene information
 
 # load excel spreadsheets with genes of interest from E. coli Nissle (EcN)
 # cluster spreadsheets and clusters correspond to more specific families of genes
@@ -129,13 +132,15 @@ def stop_HMMER_time(gene_sequences_OI): # you can't touch this
     msa  = pyhmmer.easel.TextMSA(name="msa".encode('utf_8'), 
                                  sequences=gene_sequences)
 
+    # alphabet with multiple sequence alignment
     msa_d = msa.digitize(alphabet)
 
+    # build model with alphabet from multiple sequence alignment
     builder = pyhmmer.plan7.Builder(alphabet)
     background = pyhmmer.plan7.Background(alphabet)
     hmm, _, _ = builder.build_msa(msa_d, background)
     
-    return hmm
+    return hmm # hidden markov model
 
 # generates all consensus sequences and alignment scores 
 # for every combination of genes of interest
@@ -156,6 +161,7 @@ def alignment_df_generator(gene_pairs, genes_df, nt_or_aa):
                                                   genes_df.Translation[gene_pairs[i][1]])
         else:
             print('Must specify nt or aa sequence.')
+            # amino acids or nucleotides
             return
 
         # stop, HMMER time! can't touch this
@@ -183,7 +189,7 @@ def alignment_df_generator(gene_pairs, genes_df, nt_or_aa):
     gene_pair_df = pd.DataFrame(data=gene_pair_dict)
     # gene_pair_df
     
-    return gene_pair_df
+    return gene_pair_df # dataframe with all pairs of genes compared
 
 
 # ______________________________________________________________________________
@@ -238,13 +244,14 @@ def pad_sequences(genes_df):
     
     return genes_df
 
+# dataframes with padded sequences
 genes_df_all = pad_sequences(genes_df_all) # all genes
 genes_df_cus = pad_sequences(genes_df_cus) # copper/silver transporters
 genes_df_fec = pad_sequences(genes_df_fec) # iron transporters
 genes_df_zn = pad_sequences(genes_df_zn) # zinc transporters
 genes_df_sit = pad_sequences(genes_df_sit) # iron/manganese transporters
 
-# creating HMM
+# creating HMM for gene dataframe
 def create_HMM(genes_df):
     x = []
     for i in range(len(genes_df.Gene)):
@@ -255,6 +262,7 @@ def create_HMM(genes_df):
     for i in range(len(align)):
         align_seq.append(str(align[i].seq))
 
+    # build HMM
     hmm = stop_HMMER_time(align_seq)
     
     return hmm
@@ -273,6 +281,7 @@ def apply_HMM(hmm, faa):
     hits = pipeline.search_hmm(query=hmm, sequences=sequences)
     
     if len(hits) == 0:
+        # sometimes HMM yields no hits, indicating a threshold for homology
         return 0
     
     else:
@@ -283,70 +292,68 @@ def apply_HMM(hmm, faa):
 
         return [target_protein_name, target_protein_seq]
 
-        # Salmonella
-faa_salm = "../Genome Data/Genome and FASTA Files/Salmonella.faa"
-# print("\n", faa_salm, "\n")
 
+# Salmonella HMM applying
+faa_salm = "../Genome Data/Genome and FASTA Files/Salmonella.faa"
+
+# all gene HMM
 hmm_all_salm = create_HMM(genes_df_all)
 protein_all_salm = apply_HMM(hmm_all_salm, faa_salm)
-
+# copper/silver HMM
 hmm_cus_salm = create_HMM(genes_df_cus)
 protein_cus_salm = apply_HMM(hmm_cus_salm, faa_salm)
-
+# iron HMM
 hmm_fec_salm = create_HMM(genes_df_fec)
 protein_fec_salm = apply_HMM(hmm_fec_salm, faa_salm)
-
+# zinc HMM
 hmm_zn_salm = create_HMM(genes_df_zn)
 protein_zn_salm = apply_HMM(hmm_zn_salm, faa_salm)
-
+# iron/manganese HMM
 hmm_sit_salm = create_HMM(genes_df_sit)
 protein_sit_salm = apply_HMM(hmm_sit_salm, faa_salm)
-
+# names of HMM-identified proteins
 salm_proteins_name = [protein_all_salm[0], protein_cus_salm[0],
                       protein_fec_salm[0], protein_zn_salm[0], protein_sit_salm[0]]
-
+# sequences of HMM-identified protein sequences
 salm_proteins_seq = [protein_all_salm[1], protein_cus_salm[1],
                      protein_fec_salm[1], protein_zn_salm[1], protein_sit_salm[1]]
-
+# create dictionary with salmonella information
 protein_dict_salm = {'Protein Name': salm_proteins_name, 
                      'Protein Sequence': salm_proteins_seq}
-
+# dataframe with salmonella information
 protein_df_salm = pd.DataFrame(data=protein_dict_salm)
 
 
 # Bacillus subtilis
 faa_bac_subt = "../Genome Data/Genome and FASTA Files/Bacillus subtilis.faa"
-# print("\n", faa_bac_subt, "\n")
-
+# all gene HMM
 hmm_all_bac_subt = create_HMM(genes_df_all)
 protein_all_bac_subt = apply_HMM(hmm_all_bac_subt, faa_bac_subt)
-
+# copper/silver HMM
 hmm_cus_bac_subt = create_HMM(genes_df_cus)
 protein_cus_bac_subt = apply_HMM(hmm_cus_bac_subt, faa_bac_subt)
-
+# iron HMM
 hmm_fec_bac_subt = create_HMM(genes_df_fec)
 protein_fec_bac_subt = apply_HMM(hmm_fec_bac_subt, faa_bac_subt)
-
+# zinc HMM
 hmm_zn_bac_subt = create_HMM(genes_df_zn)
 protein_zn_bac_subt = apply_HMM(hmm_zn_bac_subt, faa_bac_subt)
-
+# iron/manganese HMM
 hmm_sit_bac_subt = create_HMM(genes_df_sit)
 protein_sit_bac_subt = apply_HMM(hmm_sit_bac_subt, faa_bac_subt)
-
+# names of HMM-identified proteins
 bac_subt_proteins_name = [protein_all_bac_subt[0], protein_cus_bac_subt[0],
                           protein_fec_bac_subt[0], protein_zn_bac_subt[0], protein_sit_bac_subt[0]]
-
+# sequences of HMM-identified protein sequences
 bac_subt_proteins_seq = [protein_all_bac_subt[1], protein_cus_bac_subt[1],
                          protein_fec_bac_subt[1], protein_zn_bac_subt[1], protein_sit_bac_subt[1]]
-
-
-
+# dictionary with bacillus subtilis information
 protein_dict_bac_subt = {'Protein Name': bac_subt_proteins_name, 
                          'Protein Sequence': bac_subt_proteins_seq}
-
+# dataframe with bacillus subtilis information
 protein_df_bac_subt = pd.DataFrame(data=protein_dict_bac_subt)
 
-
+# export identified genes to excel in the Figures Folder
 protein_df_salm.to_excel('../Figures/Identified Salmonella Transporters.xlsx')
 protein_df_salm.to_excel('../Figures/Identified Bacillus Subtillis Transporters.xlsx')
 
@@ -411,13 +418,12 @@ def bootstrap(samples, genes_df):
 
             bac_subt_protein_names.append(protein_all_bac_subt[0])
             bac_subt_protein_seqs.append(protein_all_bac_subt[1])
-        
+    # salmonella randomly selected protein results dictionary
     protein_dict_salm_rand = {'Protein_Name': salm_protein_names, 
                               'Protein_Sequence': salm_protein_seqs}
-
+    # salmonella randomly selected protein results dataframe
     protein_df_salm_rand = pd.DataFrame(data=protein_dict_salm_rand)
-
-
+    # bacillus subtillis randomly selected protein results
     protein_dict_bac_subt_rand = {'Protein_Name': bac_subt_protein_names, 
                                   'Protein_Sequence': bac_subt_protein_seqs}
 
@@ -425,7 +431,8 @@ def bootstrap(samples, genes_df):
     
     return [protein_df_salm_rand, protein_df_bac_subt_rand]
 
-
+# function for calculating how many times each result is generated from
+# each of the thousand bootstrap for generating barplot
 def counts_to_data(counts):
         x = []
         height =[]
@@ -435,6 +442,7 @@ def counts_to_data(counts):
 
         return [x, height]
 
+# plot bar plot showing bootstrapping results
 def plot_bootstrap(protein_df_salm_rand, protein_df_bac_subt_rand):
     z_salm = protein_df_salm_rand.Protein_Name
     z_bac_subt = protein_df_bac_subt_rand.Protein_Name
@@ -459,12 +467,14 @@ def plot_bootstrap(protein_df_salm_rand, protein_df_bac_subt_rand):
     plt.savefig('../Figures/Salmonella Bootstrap.png')
 
     plt.figure(1, figsize = (10, 5))
+    # manually determined labels from first bootstrap run used in paper
     bac_subt_labels = ['srfP', 'no hits', 'yscB', 'mntB', 'sppO',
                        'rnY', 'fecD', 'fecE', 'sxzZ', 'yttA', 
                        'ykyA', 'feuV', 'fhuC', 'ykrA', 'pksN',
                        'atpF', 'fecC', 'pspA', 'yoaW', 'spoIIP',
                        'znuC', 'ylqG', 'skiX', 'floT']
-    
+    ## manually determined labels from first bootstrap run used in paper, code for using
+    ## those labels below
     # plt.bar(bac_subt_labels[0:(len(counts_bac_subt[0]))], counts_bac_subt[1], color='#FF6103')
     plt.bar(counts_bac_subt[0], counts_bac_subt[1], color='#FF6103')
     plt.xticks(rotation = 45)
@@ -501,7 +511,7 @@ for i in range(len(seq)): # loop through every base in the genome sequence
     
     elif (seq[i] == 'C'):
         num_C += 1
-    
+# calculate percentage of genome for each nucleotide
 frac_A = num_A/len(seq) * 100
 frac_T = num_T/len(seq) * 100
 frac_G = num_G/len(seq) * 100
@@ -516,7 +526,6 @@ fig = plt.figure(figsize = (10, 5))
 
 # creating the bar plot
 plt.bar(bases, values, color ='maroon', width = 0.4)
-
 plt.xlabel("Nucleotide Base")
 plt.ylabel("Percentage of Genome (%)")
 plt.title("Distribution of Nucleotide Bases in E. coli Nissle Genome")
