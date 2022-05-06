@@ -1,6 +1,6 @@
 # ______________________________________________________________________________
 # if you don't have Bio installed, just have to do "conda 
-# install biopython" in terminal
+# install "pip install biopython" in terminal
 from Bio import SeqIO
 from Bio.SeqFeature import FeatureLocation
 from Bio import pairwise2
@@ -155,7 +155,8 @@ def alignment_df_generator(gene_pairs, genes_df, nt_or_aa):
             alignments = pairwise2.align.globalxx(genes_df.Translation[gene_pairs[i][0]], 
                                                   genes_df.Translation[gene_pairs[i][1]])
         else:
-            return print('Must specify nt or aa sequence.')
+            print('Must specify nt or aa sequence.')
+            return
 
         # stop, HMMER time! can't touch this
         sequence1 = alignments[0][1]
@@ -474,7 +475,7 @@ def plot_bootstrap(protein_df_salm_rand, protein_df_bac_subt_rand):
     plt.savefig('../Figures/Bacillus Subtilis Bootstrap.png')
     return fig
 
-samples = 10
+samples = 1000
 [protein_df_salm_rand, protein_df_bac_subt_rand] = bootstrap(samples, genes_df_all)
 fig = plot_bootstrap(protein_df_salm_rand, protein_df_bac_subt_rand)
 
