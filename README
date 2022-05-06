@@ -1,38 +1,64 @@
-Daniel Pascal
-3/14/22
-20.440 Problem Set 4
-Team: Shonit Sharma, Daniel Pascal
+Daniel Pascal & Shonit Sharma
+20.440 Project (Hidden Markov modeling for de novo identification of transition metal ion transporters to improve genetic circuit control)
+5/9/22
 
 ---------
 OVERVIEW
-Repository contains the data and code required to generate one figure from our project, 
-which is the analysis of conserved sequences present in transition metal ion transporters 
-for the E. coli Nissle genome. Figure shows the percentage of A, T, G, and C in the E. coli Nissle genome.
-
+Repository contains the data and code required to generate figures from our project, which involves identifying transition metal ion transporters (based on the E. coli Nissle genome) from two additional genomes, Salmonella and Bacillus subtilis.
 
 ---------
 DATA
-Escherichia coli Nissle 1917 (E. coli) complete genome, including sequence and features in a
+Escherichia coli Nissle 1917 (EcN) complete genome, including sequence and features in a
 RefSeq Genomic GenBank format (.gbff) file. Annotation was added by the NCBI Prokaryotic Genome 
-Annotation Pipeline (released 2013). Publicly available at https://www.ncbi.nlm.nih.gov/assembly/GCF_000714595.1#/def
-
+Annotation Pipeline (released 2013). Publicly available at https://www.ncbi.nlm.nih.gov/assembly/GCF_000714595.1#/def. Salmonella and Bacillus subtilis genomes come from the same source and the protein FASTA files are publicly available at https://www.ncbi.nlm.nih.gov/assembly/GCF_000006945.2 and https://www.ncbi.nlm.nih.gov/assembly/GCF_000009045.1, respectively.
 
 ---------
 FOLDER STRUCTURE
-440-PSET4
-├── Code
-│   └── pset_4.py                               # code for generating first figure
-├── Figures
-│   └── 'Distribution of Nucleotide Bases.png'  # first figure
-└── Genome Data
-    └── 'E. coli Nissle Genome.gbff'            # genome data file
-
+ 20.440-final-project                  # The repository.
+ ├── Code                              # Folder containing code.
+ │   └── 440_final_code.py             # Code to conduct the modeling and generate the figures.
+ │  
+ ├── Data                                                            # Folder containing data.
+ │   ├── Genes of Interest                                           # Folder containing data folder.
+ │   │   ├── Genes of Interest Nissle.xlsx                           # All genes of interest.
+ │   │   ├── Metal Transporter Genes in E. coli Nissle (440).xlsx    # EcN metal ion transporter genes.
+ │   │   ├── cus cluster.xlsx                                        # Cluster of genes of interest.                            
+ │   │   ├── fec cluster.xlsx                                        # Cluster of genes of interest.  
+ │   │   ├── sit cluster.xlsx                                        # Cluster of genes of interest.  
+ │   │   └── zn cluster.xlsx                                         # Cluster of genes of interest.              
+ │   │ 
+ │   └── Genome and FASTA Files                                      # Folder containing data folder.
+ │       ├── Bacillus subtilis.faa                                   # B. subtilis genome.
+ │       ├── E. coli Nissle Genome.gbff                              # EcN genome.
+ │       └── Salmonella.faa                                          # Salmonella genome.
+ │
+ ├── Figures                                              # Folder containing figures.
+ │   ├── Bacillus Subtilis Boostrap.png                   # Figure generated from the code.
+ │   ├── Dendrogram ofCopper and Silver Genes.png         # Figure generated from the code.
+ │   ├── Dendrogram ofIron Genes.png                      # Figure generated from the code.
+ │   ├── Dendrogram ofIron and Manganese Genes.png        # Figure generated from the code.
+ │   ├── Dendrogram ofZinc Genes.png                      # Figure generated from the code.
+ │   ├── Dendrogram ofall Genes.png                       # Figure generated from the code.
+ │   ├── Dendrogram of Nucleotide Bases.png               # Figure generated from the code.
+ │   ├── Identified Bacillus Subtilis Transporters.xlsx   # Figure generated from the code.
+ │   ├── Identified Salmonella Transporters.xlsx          # Figure generated from the code.
+ │   └── Salmonella Bootstrap.png                         # Figure generated from the code.
+ │  
+ ├── .gitattributes                              # Gives attributes to pathnames.
+ │  
+ ├── .gitignore                                  # Specifies intentionally untracked files.
+ │ 
+ └── README.md                                   # This documentation.
 
 ---------
 INSTALLATION
-Run code by cloning repository and running the pset_4.py script after downloading the required packages.
+Run code by cloning repository and running the 440_final_code.py script after downloading the required packages.
 
 Required packages:
-    - Bio==1.3.3
-    - matplotlib==3.3.4
-    - numpy==1.20.1
+	- Bio==1.3.8
+	- logomaker==0.8
+	- matplotlib==3.3.4
+	- numpy==1.20.1
+	- pandas==1.2.4
+	- pyhmmer==0.5.0
+	- scipy==1.6.2
