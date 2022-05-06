@@ -474,7 +474,7 @@ def plot_bootstrap(protein_df_salm_rand, protein_df_bac_subt_rand):
     plt.savefig('../Figures/Bacillus Subtilis Bootstrap.png')
     return fig
 
-samples = 1000
+samples = 10
 [protein_df_salm_rand, protein_df_bac_subt_rand] = bootstrap(samples, genes_df_all)
 fig = plot_bootstrap(protein_df_salm_rand, protein_df_bac_subt_rand)
 
@@ -519,7 +519,7 @@ plt.bar(bases, values, color ='maroon', width = 0.4)
 plt.xlabel("Nucleotide Base")
 plt.ylabel("Percentage of Genome (%)")
 plt.title("Distribution of Nucleotide Bases in E. coli Nissle Genome")
-plt.savefig('Distribution of Nucleotide Bases.png')
+plt.savefig('../Figures/Distribution of Nucleotide Bases.png')
 plt.show()
 
 
@@ -596,7 +596,7 @@ def create_square_mat(genes_df, genes_df_paired):
     
     return square_mat_df
 
-def create_dendogram(square_mat_df, genes_df):
+def create_dendogram(square_mat_df, genes_df, gene_OI):
     
     square_mat_df -= 1
     mat = -square_mat_df
@@ -608,6 +608,7 @@ def create_dendogram(square_mat_df, genes_df):
     plt.ylabel("Dissimilarity of Genes")
     plt.xlabel("Genes")
     plt.ylim([0,1])
+    plt.savefig('../Figures/Dendrogram of' + gene_OI + '.png')
     plt.show()
     
     return dend
@@ -616,19 +617,24 @@ def create_dendogram(square_mat_df, genes_df):
     # All Dendrograms
 
 square_mat_all_df = create_square_mat(genes_df_all, genes_df_all_paired)
-dend_all = create_dendogram(square_mat_all_df, genes_df_all)
+dend_all = create_dendogram(square_mat_all_df, genes_df_all, 'all Genes')
+# plt.savefig('../Figures/Dendrogram of all Genes.png')
 
 square_mat_cus_df = create_square_mat(genes_df_cus, genes_df_cus_paired)
-dend_cus = create_dendogram(square_mat_cus_df, genes_df_cus)
+dend_cus = create_dendogram(square_mat_cus_df, genes_df_cus, 'Copper and Silver Genes')
+# plt.savefig('../Figures/Dendrogram of Copper and Silver Genes.png')
 
 square_mat_fec_df = create_square_mat(genes_df_fec, genes_df_fec_paired)
-dend_fec = create_dendogram(square_mat_fec_df, genes_df_fec)
+dend_fec = create_dendogram(square_mat_fec_df, genes_df_fec, 'Iron Genes')
+# plt.savefig('../Figures/Dendrogram of Iron Genes.png')
 
 square_mat_zn_df = create_square_mat(genes_df_zn, genes_df_zn_paired)
-dend_zn = create_dendogram(square_mat_zn_df, genes_df_zn)
+dend_zn = create_dendogram(square_mat_zn_df, genes_df_zn, 'Zinc Genes')
+# plt.savefig('../Figures/Dendrogram of Zinc.png')
 
 square_mat_sit_df = create_square_mat(genes_df_sit, genes_df_sit_paired)
-dend_sit = create_dendogram(square_mat_sit_df, genes_df_sit)
+dend_sit = create_dendogram(square_mat_sit_df, genes_df_sit, 'Iron and Manganese Genes')
+# plt.savefig('../Figures/Dendrogram of Iron and Manganese Genes.png')
 
 
 print('done')
