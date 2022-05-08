@@ -52,7 +52,7 @@ FOLDER STRUCTURE
 
 ---------
 INSTALLATION
-Run code by cloning repository and running the 440_final_code.py script after downloading the required packages.
+Run code by cloning repository and running the 440_final_code.py script after downloading the required packages. Navigate into code folder: "cd Code" in terminal on Mac and then run "python 440_final_code.py"
 
 Required packages:
 	- Bio==1.3.8
