@@ -38,7 +38,7 @@ from collections import Counter
 # ______________________________________________________________________________
 # get a record of the file, where the first item from parse() is the largest 
 # chromosome
-file = '../Genome Data/Genome and FASTA Files/E. coli Nissle Genome.gbff'
+file = '../Data/Genome and FASTA Files/E. coli Nissle Genome.gbff'
 record = list(SeqIO.parse(file, 'gb'))[0]
 
 # if you need the sequence of the whole record
@@ -97,11 +97,11 @@ def gene_df_generator(record, genes_df):
 
 # load excel spreadsheets with genes of interest from E. coli Nissle (EcN)
 # cluster spreadsheets and clusters correspond to more specific families of genes
-genes_df_all = pd.read_excel('../Genome Data/Genes of Interest/Metal Transporter Genes in E. coli Nissle (440).xlsx')
-genes_df_cus = pd.read_excel('../Genome Data/Genes of Interest/cus cluster.xlsx') # copper/silver
-genes_df_fec = pd.read_excel('../Genome Data/Genes of Interest/fec cluster.xlsx') # iron
-genes_df_zn = pd.read_excel('../Genome Data/Genes of Interest/zn cluster.xlsx') # zinc
-genes_df_sit = pd.read_excel('../Genome Data/Genes of Interest/sit cluster.xlsx') # iron/manganese
+genes_df_all = pd.read_excel('../Data/Genes of Interest/Metal Transporter Genes in E. coli Nissle (440).xlsx')
+genes_df_cus = pd.read_excel('../Data/Genes of Interest/cus cluster.xlsx') # copper/silver
+genes_df_fec = pd.read_excel('../Data/Genes of Interest/fec cluster.xlsx') # iron
+genes_df_zn = pd.read_excel('../Data/Genes of Interest/zn cluster.xlsx') # zinc
+genes_df_sit = pd.read_excel('../Data/Genes of Interest/sit cluster.xlsx') # iron/manganese
 
 genes_df_all = gene_df_generator(record, genes_df_all) # all genes listed below
 genes_df_cus = gene_df_generator(record, genes_df_cus) # copper/silver transporters
@@ -110,7 +110,7 @@ genes_df_zn = gene_df_generator(record, genes_df_zn) # zinc transporters
 genes_df_sit = gene_df_generator(record, genes_df_sit) # iron/manganese transporters
 
 # export gene information to excel
-genes_df_all.to_excel('../Genome Data/Genes of Interest/Genes of Interest Nissle.xlsx')
+genes_df_all.to_excel('../Data/Genes of Interest/Genes of Interest Nissle.xlsx')
 
 # ______________________________________________________________________________
 ## stop... HMMR time
@@ -294,7 +294,7 @@ def apply_HMM(hmm, faa):
 
 
 # Salmonella HMM applying
-faa_salm = "../Genome Data/Genome and FASTA Files/Salmonella.faa"
+faa_salm = "../Data/Genome and FASTA Files/Salmonella.faa"
 
 # all gene HMM
 hmm_all_salm = create_HMM(genes_df_all)
@@ -325,7 +325,7 @@ protein_df_salm = pd.DataFrame(data=protein_dict_salm)
 
 
 # Bacillus subtilis
-faa_bac_subt = "../Genome Data/Genome and FASTA Files/Bacillus subtilis.faa"
+faa_bac_subt = "../Data/Genome and FASTA Files/Bacillus subtilis.faa"
 # all gene HMM
 hmm_all_bac_subt = create_HMM(genes_df_all)
 protein_all_bac_subt = apply_HMM(hmm_all_bac_subt, faa_bac_subt)
