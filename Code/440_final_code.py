@@ -485,7 +485,9 @@ def plot_bootstrap(protein_df_salm_rand, protein_df_bac_subt_rand):
     plt.savefig('../Figures/Bacillus Subtilis Bootstrap.png')
     return fig
 
+# sample size for how many bootstrap replicates to run
 samples = 1000
+# bootstrap function for both bacteria strains
 [protein_df_salm_rand, protein_df_bac_subt_rand] = bootstrap(samples, genes_df_all)
 fig = plot_bootstrap(protein_df_salm_rand, protein_df_bac_subt_rand)
 
@@ -498,6 +500,7 @@ num_T = 0
 num_G = 0
 num_C = 0
 
+# count how many of each nucleotide
 for i in range(len(seq)): # loop through every base in the genome sequence
     
     if (seq[i] == 'A'):
@@ -511,6 +514,7 @@ for i in range(len(seq)): # loop through every base in the genome sequence
     
     elif (seq[i] == 'C'):
         num_C += 1
+
 # calculate percentage of genome for each nucleotide
 frac_A = num_A/len(seq) * 100
 frac_T = num_T/len(seq) * 100
@@ -522,6 +526,7 @@ data = {'A':frac_A, 'T':frac_T, 'G':frac_G,'C':frac_C}
 bases = list(data.keys())
 values = list(data.values())
 
+# plot figure of bases
 fig = plt.figure(figsize = (10, 5))
 
 # creating the bar plot
@@ -532,60 +537,7 @@ plt.title("Distribution of Nucleotide Bases in E. coli Nissle Genome")
 plt.savefig('../Figures/Distribution of Nucleotide Bases.png')
 plt.show()
 
-
-# ______________________________________________________________________________
-### Onehot Encoding
-# Basic structure inspired by: https://machinelearningmastery.com/how-to-one-hot-encode-sequence-data-in-python/
-from numpy import argmax
-
-# inputs
-alphabet_nt = 'ATCG'
-alphabet_aa = 'ACDEFGHIKLMNPQRSTVWY'
-# data = 'AACCTGTGAC'
-data_nt = genes_df_all.Sequence[0]
-data_aa = genes_df_all.Translation[0]
-
-alphabet = alphabet_nt
-data = data_nt
-
-# alphabet = alphabet_aa
-# data = data_aa
-
-# print('data:', data)
-
-# encoding
-char_to_int = dict((c, i) for i, c in enumerate(alphabet))
-int_to_char = dict((i, c) for i, c in enumerate(alphabet))
-
-
-# integer encode input data
-integer_encoded = [char_to_int[char] for char in data]
-# print('data encode:', integer_encoded)
-
-
-# one hot encode
-onehot_encoded = list()
-for value in integer_encoded:
-    letter = [0 for _ in range(len(alphabet))]
-    letter[value] = 1
-    onehot_encoded.append(letter)
-# print('One Hot encode:', onehot_encoded)
-
-
-# one hot dataframe
-onehot_df = pd.DataFrame([])
-
-onehot_df['Alphabet'] = list(alphabet)
-
-for i in range(len(onehot_encoded)):
-    onehot_df[i] = onehot_encoded[i]
-
-# invert encoding
-inverted = int_to_char[argmax(onehot_encoded[0])]
-
-
 # Function-based Dendrogram Generator
-
 def create_square_mat(genes_df, genes_df_paired):
     
     square_mat_df = pd.DataFrame(np.zeros((len(genes_df.Gene),len(genes_df.Gene))),
@@ -618,33 +570,27 @@ def create_dendogram(square_mat_df, genes_df, gene_OI):
     plt.ylabel("Dissimilarity of Genes")
     plt.xlabel("Genes")
     plt.ylim([0,1])
-    plt.savefig('../Figures/Dendrogram of' + gene_OI + '.png')
+    plt.savefig('../Figures/Dendrogram of ' + gene_OI + '.png')
     plt.show()
     
     return dend
 
 
-    # All Dendrograms
-
+# All Dendrograms
 square_mat_all_df = create_square_mat(genes_df_all, genes_df_all_paired)
 dend_all = create_dendogram(square_mat_all_df, genes_df_all, 'all Genes')
-# plt.savefig('../Figures/Dendrogram of all Genes.png')
 
 square_mat_cus_df = create_square_mat(genes_df_cus, genes_df_cus_paired)
 dend_cus = create_dendogram(square_mat_cus_df, genes_df_cus, 'Copper and Silver Genes')
-# plt.savefig('../Figures/Dendrogram of Copper and Silver Genes.png')
 
 square_mat_fec_df = create_square_mat(genes_df_fec, genes_df_fec_paired)
 dend_fec = create_dendogram(square_mat_fec_df, genes_df_fec, 'Iron Genes')
-# plt.savefig('../Figures/Dendrogram of Iron Genes.png')
 
 square_mat_zn_df = create_square_mat(genes_df_zn, genes_df_zn_paired)
 dend_zn = create_dendogram(square_mat_zn_df, genes_df_zn, 'Zinc Genes')
-# plt.savefig('../Figures/Dendrogram of Zinc.png')
 
 square_mat_sit_df = create_square_mat(genes_df_sit, genes_df_sit_paired)
 dend_sit = create_dendogram(square_mat_sit_df, genes_df_sit, 'Iron and Manganese Genes')
-# plt.savefig('../Figures/Dendrogram of Iron and Manganese Genes.png')
 
 
-print('done')
+print('all code done running')
