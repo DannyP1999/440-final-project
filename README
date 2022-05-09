@@ -48,7 +48,12 @@ FOLDER STRUCTURE
  │  
  ├── .gitignore                                  # Specifies intentionally untracked files.
  │ 
- └── README.md                                   # This documentation.
+ ├── README.md   				 # This documentation.
+ │ 
+ └── 20_440_final_jupyter_notebook.zip 		 # if for some reason the .py file doesn't work, this zip file
+						 # contains all the files and and a jupyter notebook necessary 
+						 # to run the code, which just functions as a backup and can 
+						 # otherwise be ignored                             
 
 ---------
 INSTALLATION
